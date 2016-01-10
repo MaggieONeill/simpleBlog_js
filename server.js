@@ -1,6 +1,6 @@
 var express = require('express');//node package
 var path = require('path');//nodejs component
-var bourne = require("bourne");//node package
+var Bourne = require("bourne");//node package
 
 var app = express();//express application object
 var posts = new Bourne("simpleBlogPosts.json");
@@ -12,6 +12,20 @@ app.configure(function(){
   app.use(express.static(path.join(__dirname, 'public')));//serve files from path given as parameter
 });
 
-app.get('/*', function(request, response){
-  res.render("index.ejs");
+app.get("/posts", function(req, res){
+  posts.find(function (results){
+    res.json(results);
+  });
 });
+
+app.post("/posts", function(req, res){
+  posts.insert(req.body, function(result){
+    res.json(result);
+  });
+});
+
+app.get('/*', function(req, res){
+  res.render("index.ejs");//renders server side template
+});
+
+app.listen(3000);
